@@ -1,5 +1,16 @@
 #JSONChecker changelog
 
+##v1.1.0
+
+###Compatibility
+
+No changes.
+
+###Changes list
+
+- check() method by default returns `true` or `false`
+- getLastReport() method added to return full report
+
 ##v1.0.0
 
 ###Compatibility

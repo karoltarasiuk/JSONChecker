@@ -22,6 +22,8 @@ define([
 
     _.extend(JSONChecker.prototype, {
 
+        lastReport: null,
+
         /**
          * Performs check on the passed valid JSON value against specification
          * passed in a constructor.
@@ -50,17 +52,36 @@ define([
                 context = '';
             }
 
-            var rootNode = JSONNodeFactory.createNode(
-                json,
-                this.specification,
-                context
-            );
+            var i,
+                temp = false,
+                rootNode = JSONNodeFactory.createNode(
+                    json,
+                    this.specification,
+                    context
+                );
 
             if (rootNode) {
-                return rootNode.check();
-            } else {
-                return null;
+                this.lastReport = rootNode.check();
+                if (_.isArray(this.lastReport)) {
+                    for (i = 0; i < this.lastReport.length; i++) {
+                        if (_.isBoolean(this.lastReport[i].valid)) {
+                            temp = temp || this.lastReport[i].valid;
+                        }
+                    }
+                    return temp;
+                } else {
+                    if (_.isBoolean(this.lastReport.valid)) {
+                        return this.lastReport.valid;
+                    }
+                }
             }
+
+            return false;
+        },
+
+        getLastReport: function () {
+
+            return this.lastReport;
         }
     });
 

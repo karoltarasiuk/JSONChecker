@@ -15,7 +15,9 @@ var valid = {};
 var invalid = 1;
 ```
 
-Output contains few informations, and the most important one is of course whether the object is valid or not, e.g.:
+Simple check returns boolean value: either `true` or `false`.
+
+Full output (after calling `getLastReport()` method) contains few informations, and the most important one is of course whether the object is valid or not, e.g.:
 ```
 {
     valid: true,        // or false
@@ -125,6 +127,7 @@ require([
 
     var checker = new JSONChecker(spec);
     console.log(checker.check(json, 'object'));
+    console.log(checker.getLastReport());
 });
 
 ```

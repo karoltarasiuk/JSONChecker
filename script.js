@@ -62,4 +62,5 @@ require([
 
     var checker = new JSONChecker(spec);
     console.log(checker.check(json, 'object'));
+    console.log(checker.getLastReport());
 });
