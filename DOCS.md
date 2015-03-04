@@ -12,6 +12,11 @@ var json = {},
 console.log(checker.check(json, 'object'));
 
 // OUTPUTS:
+// true
+
+console.log(checker.getLastReport());
+
+// OUTPUTS:
 // {
 //     valid: true,
 //     errors: [],

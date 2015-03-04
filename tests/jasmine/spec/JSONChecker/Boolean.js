@@ -10,25 +10,27 @@ define([
 
     describe("JSONChecker", function() {
 
-        var i, checker, args, result, comparer, temp,
+        var i, checker, args, result, comparer, temp1, temp2,
             tester = function (toBe) {
 
                 return function (arg) {
 
                     checker = new JSONChecker(arg.spec);
-                    result = checker.check(arg.json, arg['context']);
+                    result = checker.check(arg.json, arg.context);
+                    fullResult = checker.getLastReport();
 
                     // setting spec & json as they're always in result
-                    arg.result.spec = arg.spec;
-                    arg.result.json = arg.json;
+                    arg.fullResult.spec = arg.spec;
+                    arg.fullResult.json = arg.json;
 
                     comparer = new ObjectComparer();
-                    temp = comparer.areEqual(result, arg.result);
+                    temp1 = result === arg.result;
+                    temp2 = comparer.areEqual(fullResult, arg.fullResult);
 
-                    expect(temp).toBe(toBe);
+                    expect(temp1 && temp2).toBe(toBe);
 
-                    if (temp !== toBe) {
-                        console.log('not equal', result, arg.result);
+                    if (temp1 && temp2 !== toBe) {
+                        console.log('not equal', result, fullResult, arg.result, arg.fullResult);
                     }
                 };
             };
@@ -41,7 +43,8 @@ define([
                     {
                         json: false,
                         spec: { type: 'boolean' },
-                        result: {
+                        result: true,
+                        fullResult: {
                             valid: true,
                             errors: [],
                             context: ''
@@ -50,7 +53,8 @@ define([
                     {
                         json: true,
                         spec: { type: 'boolean' },
-                        result: {
+                        result: true,
+                        fullResult: {
                             valid: true,
                             errors: [],
                             context: ''
@@ -60,7 +64,8 @@ define([
                         json: false,
                         spec: { type: 'boolean' },
                         context: '',
-                        result: {
+                        result: true,
+                        fullResult: {
                             valid: true,
                             errors: [],
                             context: ''
@@ -70,7 +75,8 @@ define([
                         json: true,
                         spec: { type: 'boolean' },
                         context: '',
-                        result: {
+                        result: true,
+                        fullResult: {
                             valid: true,
                             errors: [],
                             context: ''
@@ -80,7 +86,8 @@ define([
                         json: false,
                         spec: { type: 'boolean' },
                         context: 'some.nested.context',
-                        result: {
+                        result: true,
+                        fullResult: {
                             valid: true,
                             errors: [],
                             context: 'some.nested.context'
@@ -90,7 +97,8 @@ define([
                         json: true,
                         spec: { type: 'boolean' },
                         context: 'some.nested.context',
-                        result: {
+                        result: true,
+                        fullResult: {
                             valid: true,
                             errors: [],
                             context: 'some.nested.context'
@@ -107,7 +115,8 @@ define([
                     {
                         json: false,
                         spec: { type: 'boolean' },
-                        result: {
+                        result: false,
+                        fullResult: {
                             valid: false,
                             errors: [],
                             context: ''
@@ -116,7 +125,8 @@ define([
                     {
                         json: true,
                         spec: { type: 'boolean' },
-                        result: {
+                        result: false,
+                        fullResult: {
                             valid: false,
                             errors: [],
                             context: ''
@@ -126,7 +136,8 @@ define([
                         json: false,
                         spec: { type: 'boolean' },
                         context: '',
-                        result: {
+                        result: true,
+                        fullResult: {
                             valid: true,
                             errors: ['some error'],
                             context: ''
@@ -136,7 +147,8 @@ define([
                         json: true,
                         spec: { type: 'boolean' },
                         context: '',
-                        result: {
+                        result: true,
+                        fullResult: {
                             valid: true,
                             errors: ['some error'],
                             context: ''
@@ -146,7 +158,8 @@ define([
                         json: false,
                         spec: { type: 'boolean' },
                         context: 'some.nested.context',
-                        result: {
+                        result: true,
+                        fullResult: {
                             valid: true,
                             errors: [],
                             context: 'some.invalid.context'
@@ -156,7 +169,8 @@ define([
                         json: true,
                         spec: { type: 'boolean' },
                         context: 'some.nested.context',
-                        result: {
+                        result: true,
+                        fullResult: {
                             valid: true,
                             errors: [],
                             context: 'some.invalid.context'

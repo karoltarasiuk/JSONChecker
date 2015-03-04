@@ -10,25 +10,27 @@ define([
 
     describe("JSONChecker", function() {
 
-        var i, checker, args, result, comparer, temp,
+        var i, checker, args, result, comparer, temp1, temp2,
             tester = function (toBe) {
 
                 return function (arg) {
 
                     checker = new JSONChecker(arg.spec);
-                    result = checker.check(arg.json, arg['context']);
+                    result = checker.check(arg.json, arg.context);
+                    fullResult = checker.getLastReport();
 
                     // setting spec & json as they're always in result
-                    arg.result.spec = arg.spec;
-                    arg.result.json = arg.json;
+                    arg.fullResult.spec = arg.spec;
+                    arg.fullResult.json = arg.json;
 
                     comparer = new ObjectComparer();
-                    temp = comparer.areEqual(result, arg.result);
+                    temp1 = result === arg.result;
+                    temp2 = comparer.areEqual(fullResult, arg.fullResult);
 
-                    expect(temp).toBe(toBe);
+                    expect(temp1 && temp2).toBe(toBe);
 
-                    if (temp !== toBe) {
-                        console.log('not equal', result, arg.result);
+                    if (temp1 && temp2 !== toBe) {
+                        console.log('not equal', result, fullResult, arg.result, arg.fullResult);
                     }
                 };
             };
@@ -41,7 +43,8 @@ define([
                     {
                         json: [],
                         spec: { type: 'array' },
-                        result: {
+                        result: true,
+                        fullResult: {
                             valid: true,
                             errors: [],
                             context: ''
@@ -51,7 +54,8 @@ define([
                         json: [],
                         spec: { type: 'array' },
                         context: '',
-                        result: {
+                        result: true,
+                        fullResult: {
                             valid: true,
                             errors: [],
                             context: ''
@@ -61,7 +65,8 @@ define([
                         json: [],
                         spec: { type: 'array' },
                         context: 'some.nested.context',
-                        result: {
+                        result: true,
+                        fullResult: {
                             valid: true,
                             errors: [],
                             context: 'some.nested.context'
@@ -71,7 +76,8 @@ define([
                         json: [1, 2],
                         spec: { type: 'array', length: 2 },
                         context: 'some.nested.context',
-                        result: {
+                        result: true,
+                        fullResult: {
                             valid: true,
                             errors: [],
                             context: 'some.nested.context'
@@ -86,7 +92,8 @@ define([
                             ]
                         },
                         context: 'some.nested.context',
-                        result: {
+                        result: true,
+                        fullResult: {
                             valid: true,
                             errors: [],
                             context: 'some.nested.context',
@@ -112,7 +119,8 @@ define([
                             length: 3
                         },
                         context: 'some.nested.context',
-                        result: {
+                        result: true,
+                        fullResult: {
                             valid: true,
                             errors: [],
                             context: 'some.nested.context',
@@ -145,7 +153,8 @@ define([
                             length: 4
                         },
                         context: 'some.nested.context',
-                        result: {
+                        result: false,
+                        fullResult: {
                             valid: false,
                             errors: ["Provided JSON array doesn't have required length"],
                             context: 'some.nested.context',
@@ -179,7 +188,8 @@ define([
                             length: 3
                         },
                         context: 'some.nested.context',
-                        result: {
+                        result: false,
+                        fullResult: {
                             valid: false,
                             errors: [],
                             context: 'some.nested.context',
@@ -218,7 +228,8 @@ define([
                             length: 4
                         },
                         context: 'some.nested.context',
-                        result: {
+                        result: false,
+                        fullResult: {
                             valid: false,
                             errors: ["Provided JSON array doesn't have required length"],
                             context: 'some.nested.context',
@@ -240,7 +251,8 @@ define([
                             length: 4
                         },
                         context: 'some.nested.context',
-                        result: {
+                        result: false,
+                        fullResult: {
                             valid: false,
                             errors: ["Provided JSON is not an array"],
                             context: 'some.nested.context'
@@ -250,7 +262,8 @@ define([
                         json: [],
                         spec: { type: 'array', length: 2 },
                         context: 'some.nested.context',
-                        result: {
+                        result: false,
+                        fullResult: {
                             valid: false,
                             errors: ["Provided JSON array doesn't have required length"],
                             context: 'some.nested.context'
@@ -259,7 +272,8 @@ define([
                     {
                         json: 1,
                         spec: { type: 'array' },
-                        result: {
+                        result: false,
+                        fullResult: {
                             valid: false,
                             errors: ["Provided JSON is not an array"],
                             context: ''
@@ -269,7 +283,8 @@ define([
                         json: true,
                         spec: { type: 'array' },
                         context: '',
-                        result: {
+                        result: false,
+                        fullResult: {
                             valid: false,
                             errors: ["Provided JSON is not an array"],
                             context: ''
@@ -279,7 +294,8 @@ define([
                         json: "string",
                         spec: { type: 'array' },
                         context: '',
-                        result: {
+                        result: false,
+                        fullResult: {
                             valid: false,
                             errors: ["Provided JSON is not an array"],
                             context: ''
@@ -289,7 +305,8 @@ define([
                         json: {},
                         spec: { type: 'array' },
                         context: '',
-                        result: {
+                        result: false,
+                        fullResult: {
                             valid: false,
                             errors: ["Provided JSON is not an array"],
                             context: ''
@@ -306,7 +323,8 @@ define([
                     {
                         json: [],
                         spec: { type: 'array' },
-                        result: {
+                        result: false,
+                        fullResult: {
                             valid: false,
                             errors: [],
                             context: ''
@@ -316,7 +334,8 @@ define([
                         json: [],
                         spec: { type: 'array' },
                         context: '',
-                        result: {
+                        result: true,
+                        fullResult: {
                             valid: true,
                             errors: ['some error'],
                             context: ''
@@ -326,7 +345,8 @@ define([
                         json: [],
                         spec: { type: 'array' },
                         context: 'some.nested.context',
-                        result: {
+                        result: true,
+                        fullResult: {
                             valid: true,
                             errors: [],
                             context: 'some.invalid.context'

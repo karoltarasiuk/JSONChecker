@@ -10,31 +10,33 @@ define([
 
     describe("JSONChecker", function() {
 
-        var i, checker, args, result, comparer, temp,
+        var i, checker, args, result, comparer, temp1, temp2,
             tester = function (toBe) {
 
                 return function (arg) {
 
                     checker = new JSONChecker(arg.spec);
-                    result = checker.check(arg.json, arg['context']);
+                    result = checker.check(arg.json, arg.context);
+                    fullResult = checker.getLastReport();
 
                     // setting spec & json as they're always in result
                     for (i = 0; i < arg.spec.length; i++) {
-                        if (_.isArray(arg.result)) {
-                            arg.result[i].spec = arg.spec[i];
-                            arg.result[i].json = arg.json;
+                        if (_.isArray(arg.fullResult)) {
+                            arg.fullResult[i].spec = arg.spec[i];
+                            arg.fullResult[i].json = arg.json;
                         } else {
-                            arg.result.spec = arg.spec[i];
-                            arg.result.json = arg.json;
+                            arg.fullResult.spec = arg.spec[i];
+                            arg.fullResult.json = arg.json;
                         }
                     }
 
                     comparer = new ObjectComparer();
-                    temp = comparer.areEqual(result, arg.result);
+                    temp1 = result === arg.result;
+                    temp2 = comparer.areEqual(fullResult, arg.fullResult);
 
-                    expect(temp).toBe(toBe);
+                    expect(temp1 && temp2).toBe(toBe);
 
-                    if (temp !== toBe) {
+                    if (temp1 && temp2 !== toBe) {
                         console.log('not equal', result, arg.result);
                     }
                 };
@@ -52,7 +54,8 @@ define([
                         }, {
                             type: 'number'
                         }],
-                        result: [{
+                        result: true,
+                        fullResult: [{
                             valid: true,
                             errors: [],
                             context: ''
@@ -77,7 +80,8 @@ define([
                         }, {
                             type: 'number'
                         }],
-                        result: [{
+                        result: true,
+                        fullResult: [{
                             valid: true,
                             errors: [],
                             context: '',
@@ -117,7 +121,8 @@ define([
                         }, {
                             type: 'number'
                         }],
-                        result: [{
+                        result: false,
+                        fullResult: [{
                             valid: false,
                             errors: [],
                             context: '',
@@ -157,7 +162,8 @@ define([
                         }, {
                             type: 'number'
                         }],
-                        result: [{
+                        result: true,
+                        fullResult: [{
                             valid: true,
                             errors: [],
                             context: '',
@@ -197,7 +203,8 @@ define([
                         }, {
                             type: 'number'
                         }],
-                        result: [{
+                        result: false,
+                        fullResult: [{
                             valid: false,
                             errors: [],
                             context: '',
@@ -227,7 +234,8 @@ define([
                         spec: [{
                             type: 'object'
                         }],
-                        result: {
+                        result: true,
+                        fullResult: {
                             valid: true,
                             errors: [],
                             context: ''
